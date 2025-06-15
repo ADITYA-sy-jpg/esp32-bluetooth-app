@@ -1,0 +1,59 @@
+//WEBSITE LINK TO CONTROL LED :https://aditya-sy-jpg.github.io/esp32-bluetooth-app/
+//OK GUYS ENJOY YOUR EXPERIMENT
+
+
+
+#include <BLEDevice.h>
+#include <BLEServer.h>
+#include <BLEUtils.h>
+#include <BLE2902.h>
+
+#define SERVICE_UUID        "12345678-1234-1234-1234-123456789abc"
+#define CHARACTERISTIC_UUID "abcd1234-5678-90ab-cdef-123456789abc"
+
+BLECharacteristic *pCharacteristic;
+
+class MyCallbacks : public BLECharacteristicCallbacks {
+  void onWrite(BLECharacteristic *pCharacteristic) override {
+    String rxValue = pCharacteristic->getValue();
+
+    if (rxValue.length() > 0) {
+      Serial.print("Received Value: ");
+      Serial.println(rxValue);
+
+      if (rxValue == "ON") {
+        digitalWrite(2, HIGH);  // Turn LED ON
+        Serial.println("LED ON");
+      } else if (rxValue == "OFF") {
+        digitalWrite(2, LOW);   // Turn LED OFF
+        Serial.println("LED OFF");
+      }
+    }
+  }
+};
+
+void setup() {
+  Serial.begin(115200);
+  pinMode(2, OUTPUT);  // Built-in LED GPIO 2
+
+  BLEDevice::init("ESP32");
+  BLEServer *pServer = BLEDevice::createServer();
+  BLEService *pService = pServer->createService(SERVICE_UUID);
+
+  pCharacteristic = pService->createCharacteristic(
+                      CHARACTERISTIC_UUID,
+                      BLECharacteristic::PROPERTY_WRITE
+                    );
+
+  pCharacteristic->setCallbacks(new MyCallbacks());
+
+  pService->start();
+  BLEAdvertising *pAdvertising = BLEDevice::getAdvertising();
+  pAdvertising->start();
+
+  Serial.println("BLE Server started and waiting for connection...");
+}
+
+void loop() {
+  // No need to do anything here
+}
