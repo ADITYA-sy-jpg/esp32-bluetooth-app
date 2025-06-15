@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ESP32 BLE Control</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>ESP32 Bluetooth Control</h1>
+    <button onclick="connect()">🔌 Connect</button>
+    <button onclick="sendData('ON')">🔆 Turn ON</button>
+    <button onclick="sendData('OFF')">💡 Turn OFF</button>
+    <p id="status">Status: Not connected</p>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
